@@ -1,0 +1,1312 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+
+<title>سحب الجوائز | أسرة أبي سيفين وتماف إيريني</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  min-height:100vh;
+  font-family:Tahoma,Arial,sans-serif;
+  background:
+    radial-gradient(circle at top,#24150a 0,#0b0b0b 48%,#050505 100%);
+  color:#fff;
+  overflow-x:hidden;
+}
+
+.wrap{
+  max-width:1000px;
+  margin:auto;
+  padding:18px;
+}
+
+.card{
+  background:rgba(20,20,20,.94);
+  border:1px solid rgba(212,175,55,.35);
+  border-radius:24px;
+  box-shadow:0 15px 60px #000;
+  padding:24px;
+}
+
+header{
+  text-align:center;
+  padding:12px 8px 24px;
+}
+
+.logo{
+  font-size:48px;
+}
+
+h1{
+  margin:8px 0;
+  color:#e8c65b;
+  font-size:clamp(25px,6vw,44px);
+}
+
+.sub{
+  color:#ddd;
+  font-size:18px;
+}
+
+.controls{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+  gap:12px;
+  margin:18px 0;
+}
+
+button,
+input,
+select{
+  width:100%;
+  font:inherit;
+  border-radius:14px;
+  border:1px solid #806822;
+  padding:13px;
+  background:#111;
+  color:#fff;
+}
+
+button{
+  cursor:pointer;
+  font-weight:bold;
+}
+
+.primary{
+  background:linear-gradient(135deg,#b8860b,#f2d36b);
+  color:#111;
+  border:0;
+  font-size:20px;
+}
+
+.secondary{
+  background:#181818;
+}
+
+button:disabled{
+  opacity:.45;
+  cursor:not-allowed;
+}
+
+label{
+  display:block;
+  color:#e8c65b;
+  margin-bottom:6px;
+}
+
+.stage{
+  min-height:330px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  border-radius:22px;
+  background:linear-gradient(180deg,#16110b,#090909);
+  border:1px solid rgba(232,198,91,.3);
+  position:relative;
+  overflow:hidden;
+}
+
+.status{
+  color:#ccc;
+  font-size:18px;
+  min-height:30px;
+}
+
+.number{
+  font-size:clamp(80px,20vw,180px);
+  font-weight:900;
+  color:#f0d36d;
+  line-height:1;
+  text-shadow:0 0 35px rgba(240,211,109,.5);
+}
+
+.winner{
+  font-size:clamp(28px,7vw,52px);
+  font-weight:900;
+  color:#fff;
+  margin-top:15px;
+}
+
+.small{
+  color:#aaa;
+  margin-top:7px;
+}
+
+.panel{
+  margin-top:18px;
+}
+
+.panel h2{
+  color:#e8c65b;
+  font-size:22px;
+}
+
+.winners{
+  display:grid;
+  gap:9px;
+}
+
+.winnerRow{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  padding:12px 14px;
+  background:#111;
+  border-radius:12px;
+  border:1px solid #292929;
+}
+
+.empty{
+  color:#999;
+  text-align:center;
+  padding:20px;
+}
+
+footer{
+  text-align:center;
+  color:#777;
+  padding:22px;
+  font-size:13px;
+}
+
+.note{
+  font-size:13px;
+  color:#999;
+  line-height:1.7;
+  margin-top:12px;
+  text-align:center;
+}
+
+.session{
+  text-align:center;
+  background:#0d0d0d;
+  border:1px solid #292929;
+  border-radius:12px;
+  padding:12px;
+  color:#aaa;
+  margin-bottom:15px;
+}
+
+.session strong{
+  color:#e8c65b;
+}
+
+.hidden{
+  display:none!important;
+}
+
+.shake{
+  animation:shake .08s linear infinite;
+}
+
+@keyframes shake{
+  0%{transform:translateX(-2px)}
+  50%{transform:translateX(2px)}
+  100%{transform:translateX(-2px)}
+}
+
+.pop{
+  animation:pop .65s ease-out;
+}
+
+@keyframes pop{
+  0%{
+    transform:scale(.4);
+    opacity:0
+  }
+  70%{
+    transform:scale(1.12)
+  }
+  100%{
+    transform:scale(1);
+    opacity:1
+  }
+}
+
+canvas{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:50;
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="confetti"></canvas>
+
+<div class="wrap">
+
+<div class="card">
+
+<header>
+  <div class="logo">🎁</div>
+
+  <h1>
+    أسرة أبي سيفين وتماف إيريني
+  </h1>
+
+  <div class="sub">
+    🎉 سحب الجوائز
+  </div>
+</header>
+
+<div id="sessionInfo" class="session">
+  جارٍ تحميل بيانات الحضور...
+</div>
+
+<div class="controls">
+
+  <div>
+    <label>الجائزة الحالية</label>
+
+    <input
+      id="prizeName"
+      type="text"
+      value="الجائزة الكبرى"
+      autocomplete="off">
+  </div>
+
+  <div>
+    <label>تكرار الفائز</label>
+
+    <select id="allowRepeat">
+      <option value="no">
+        ممنوع — كل شخص مرة واحدة
+      </option>
+
+      <option value="yes">
+        مسموح
+      </option>
+    </select>
+  </div>
+
+  <div style="display:flex;align-items:end">
+
+    <button
+      id="start"
+      class="primary">
+      🎉 ابدأ السحب
+    </button>
+
+  </div>
+
+</div>
+
+<section class="stage">
+
+  <div id="status" class="status">
+    جاهز للسحب من الحاضرين المسجلين
+  </div>
+
+  <div id="number" class="number">
+    —
+  </div>
+
+  <div id="winner" class="winner"></div>
+
+  <div id="small" class="small"></div>
+
+</section>
+
+<div class="controls">
+
+  <button
+    id="next"
+    class="secondary"
+    disabled>
+    🎁 الجائزة التالية
+  </button>
+
+  <button
+    id="reset"
+    class="secondary">
+    🗑️ تصفير نتائج السحب
+  </button>
+
+</div>
+
+<section class="panel">
+
+  <h2>
+    🏆 الفائزون السابقون
+  </h2>
+
+  <div
+    id="winners"
+    class="winners">
+
+    <div class="empty">
+      لا توجد نتائج بعد
+    </div>
+
+  </div>
+
+</section>
+
+<div class="note">
+  يتم السحب من الحاضرين المسجلين في اجتماع اليوم فقط.
+</div>
+
+</div>
+
+<footer>
+  done by Nader Samir
+</footer>
+
+</div>
+
+
+<script type="module">
+
+/* =========================================
+   FIREBASE
+========================================= */
+
+const firebaseConfig = {
+
+  apiKey:
+    "AIzaSyBYsIALutHZmfmswRXj9zU50bvJLAalpgM",
+
+  authDomain:
+    "abu-seifein-youth.firebaseapp.com",
+
+  projectId:
+    "abu-seifein-youth",
+
+  storageBucket:
+    "abu-seifein-youth.firebasestorage.app",
+
+  messagingSenderId:
+    "157182913840",
+
+  appId:
+    "1:157182913840:web:5d688832c108014792acf5",
+
+  measurementId:
+    "G-96D8H1RPHM"
+};
+
+
+/* =========================================
+   FIREBASE IMPORT
+========================================= */
+
+import {
+  initializeApp
+} from
+"https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+
+import {
+  getFirestore,
+  collection,
+  doc,
+  getDoc,
+  getDocs
+} from
+"https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+
+
+/* =========================================
+   INITIALIZE
+========================================= */
+
+const app = initializeApp(firebaseConfig);
+
+const db = getFirestore(app);
+
+
+/* =========================================
+   VARIABLES
+========================================= */
+
+let members = [];
+
+let attendees = [];
+
+let drawn =
+  JSON.parse(
+    localStorage.getItem("draw_winners_v2") || "[]"
+  );
+
+let busy = false;
+
+let currentDate = "";
+
+let prizeNo = drawn.length + 1;
+
+
+/* =========================================
+   ELEMENTS
+========================================= */
+
+const $ = id =>
+  document.getElementById(id);
+
+const statusEl =
+  $("status");
+
+const numberEl =
+  $("number");
+
+const winnerEl =
+  $("winner");
+
+const smallEl =
+  $("small");
+
+const sessionInfo =
+  $("sessionInfo");
+
+
+/* =========================================
+   TODAY DATE
+========================================= */
+
+function getEgyptDate(){
+
+  const now = new Date();
+
+  return new Intl.DateTimeFormat(
+    "en-CA",
+    {
+      timeZone:"Africa/Cairo",
+      year:"numeric",
+      month:"2-digit",
+      day:"2-digit"
+    }
+  ).format(now);
+
+}
+
+
+/* =========================================
+   LOAD MEMBERS
+========================================= */
+
+async function loadMembers(){
+
+  const snap =
+    await getDocs(
+      collection(db,"members")
+    );
+
+  members =
+    snap.docs.map(d => {
+
+      const data = d.data();
+
+      return {
+        id:d.id,
+        ...data
+      };
+
+    });
+
+}
+
+
+/* =========================================
+   LOAD TODAY ATTENDANCE
+========================================= */
+
+async function loadAttendance(){
+
+  try{
+
+    statusEl.textContent =
+      "جارٍ تحميل الحاضرين...";
+
+    const sessionSnap =
+      await getDoc(
+        doc(db,"meta","currentSession")
+      );
+
+    if(!sessionSnap.exists()){
+
+      throw new Error(
+        "لا توجد جلسة حضور"
+      );
+
+    }
+
+    const session =
+      sessionSnap.data();
+
+    currentDate =
+      session.date || getEgyptDate();
+
+    const attendanceSnap =
+      await getDoc(
+        doc(
+          db,
+          "attendance",
+          currentDate
+        )
+      );
+
+    if(!attendanceSnap.exists()){
+
+      throw new Error(
+        "لا يوجد سجل حضور لهذا اليوم"
+      );
+
+    }
+
+    const data =
+      attendanceSnap.data();
+
+    const records =
+      data.records || {};
+
+    attendees = [];
+
+    for(const id of Object.keys(records)){
+
+      const member =
+        members.find(
+          m =>
+            String(m.id) === String(id) ||
+            String(m.code || "") === String(id)
+        );
+
+      if(member){
+
+        attendees.push({
+
+          id:id,
+
+          code:
+            member.code ||
+            member.number ||
+            member.id,
+
+          name:
+            member.name ||
+            member.fullName ||
+            "عضو"
+
+        });
+
+      }
+
+    }
+
+
+    sessionInfo.innerHTML =
+      "📅 اجتماع <strong>" +
+      escapeHtml(currentDate) +
+      "</strong> — " +
+      "👥 الحاضرون المؤهلون للسحب: <strong>" +
+      attendees.length +
+      "</strong>";
+
+
+    if(!attendees.length){
+
+      statusEl.textContent =
+        "لا يوجد حاضرون مؤهلون للسحب.";
+
+      $("start").disabled =
+        true;
+
+      return false;
+
+    }
+
+
+    statusEl.textContent =
+      "جاهز للسحب من " +
+      attendees.length +
+      " حاضر.";
+
+    $("start").disabled =
+      false;
+
+    return true;
+
+  }catch(error){
+
+    console.error(error);
+
+    attendees = [];
+
+    sessionInfo.textContent =
+      "⚠️ تعذر تحميل بيانات الحضور.";
+
+    statusEl.textContent =
+      "تأكد أن جلسة الحضور مفتوحة وأن هناك حضورًا مسجلًا.";
+
+    $("start").disabled =
+      true;
+
+    return false;
+
+  }
+
+}
+
+
+/* =========================================
+   ESCAPE HTML
+========================================= */
+
+function escapeHtml(value){
+
+  return String(value ?? "")
+    .replace(
+      /[&<>"']/g,
+      char => ({
+        "&":"&amp;",
+        "<":"&lt;",
+        ">":"&gt;",
+        '"':"&quot;",
+        "'":"&#039;"
+      }[char])
+    );
+
+}
+
+
+/* =========================================
+   SAVE RESULTS
+========================================= */
+
+function save(){
+
+  localStorage.setItem(
+    "draw_winners_v2",
+    JSON.stringify(drawn)
+  );
+
+  renderWinners();
+
+}
+
+
+/* =========================================
+   SHOW WINNERS
+========================================= */
+
+function renderWinners(){
+
+  const box =
+    $("winners");
+
+  if(!drawn.length){
+
+    box.innerHTML =
+      '<div class="empty">لا توجد نتائج بعد</div>';
+
+    return;
+
+  }
+
+
+  box.innerHTML =
+    drawn.map(
+      (winner,index) => `
+
+        <div class="winnerRow">
+
+          <span>
+            🏆
+            ${index + 1}.
+            ${escapeHtml(winner.prize)}
+          </span>
+
+          <strong>
+            ${escapeHtml(winner.name)}
+            — 
+            ${escapeHtml(winner.code)}
+          </strong>
+
+        </div>
+
+      `
+    ).join("");
+
+}
+
+
+/* =========================================
+   AVAILABLE PEOPLE
+========================================= */
+
+function available(){
+
+  const allowRepeat =
+    $("allowRepeat").value === "yes";
+
+
+  if(allowRepeat){
+
+    return attendees;
+
+  }
+
+
+  const used =
+    new Set(
+      drawn
+        .map(w => String(w.id))
+    );
+
+
+  return attendees.filter(
+    person =>
+      !used.has(String(person.id))
+  );
+
+}
+
+
+/* =========================================
+   SLEEP
+========================================= */
+
+function sleep(ms){
+
+  return new Promise(
+    resolve =>
+      setTimeout(resolve,ms)
+  );
+
+}
+
+
+/* =========================================
+   SOUND
+========================================= */
+
+function beep(
+  frequency = 700,
+  duration = .12
+){
+
+  try{
+
+    const AudioContext =
+      window.AudioContext ||
+      window.webkitAudioContext;
+
+    const context =
+      new AudioContext();
+
+    const oscillator =
+      context.createOscillator();
+
+    const gain =
+      context.createGain();
+
+    oscillator.frequency.value =
+      frequency;
+
+    oscillator.type =
+      "sine";
+
+    gain.gain.value =
+      .06;
+
+    oscillator.connect(gain);
+
+    gain.connect(context.destination);
+
+    oscillator.start();
+
+    oscillator.stop(
+      context.currentTime +
+      duration
+    );
+
+  }catch(error){}
+
+}
+
+
+/* =========================================
+   COUNTDOWN
+========================================= */
+
+async function countdown(){
+
+  for(
+    const number of [3,2,1]
+  ){
+
+    numberEl.textContent =
+      number;
+
+    winnerEl.textContent =
+      "";
+
+    smallEl.textContent =
+      "";
+
+    statusEl.textContent =
+      "استعد...";
+
+    beep(
+      500 + number * 130,
+      .18
+    );
+
+    numberEl.classList.add(
+      "pop"
+    );
+
+    await sleep(700);
+
+    numberEl.classList.remove(
+      "pop"
+    );
+
+  }
+
+}
+
+
+/* =========================================
+   DRAW
+========================================= */
+
+async function draw(){
+
+  if(busy)
+    return;
+
+
+  busy = true;
+
+
+  $("start").disabled =
+    true;
+
+  $("next").disabled =
+    true;
+
+
+  winnerEl.textContent =
+    "";
+
+  smallEl.textContent =
+    "";
+
+
+  const loaded =
+    await loadAttendance();
+
+
+  if(!loaded){
+
+    busy = false;
+
+    return;
+
+  }
+
+
+  const pool =
+    available();
+
+
+  if(!pool.length){
+
+    statusEl.textContent =
+      "لا يوجد مشاركون مؤهلون للسحب.";
+
+    numberEl.textContent =
+      "—";
+
+    busy = false;
+
+    $("start").disabled =
+      false;
+
+    return;
+
+  }
+
+
+  await countdown();
+
+
+  statusEl.textContent =
+    "🎲 جاري اختيار الفائز...";
+
+
+  numberEl.classList.add(
+    "shake"
+  );
+
+
+  const duration =
+    3000;
+
+  const startTime =
+    performance.now();
+
+
+  while(
+    performance.now() -
+    startTime <
+    duration
+  ){
+
+    const randomPerson =
+      pool[
+        Math.floor(
+          Math.random() *
+          pool.length
+        )
+      ];
+
+
+    numberEl.textContent =
+      randomPerson.code || "???";
+
+
+    const elapsed =
+      performance.now() -
+      startTime;
+
+
+    const delay =
+      Math.max(
+        25,
+        110 - elapsed / 35
+      );
+
+
+    await sleep(delay);
+
+  }
+
+
+  numberEl.classList.remove(
+    "shake"
+  );
+
+
+  const finalWinner =
+    pool[
+      Math.floor(
+        Math.random() *
+        pool.length
+      )
+    ];
+
+
+  numberEl.textContent =
+    finalWinner.code || "—";
+
+
+  statusEl.textContent =
+    "🎉 والفائز هو...";
+
+
+  beep(850,.15);
+
+
+  await sleep(500);
+
+
+  winnerEl.textContent =
+    finalWinner.name ||
+    "مبروك!";
+
+
+  winnerEl.classList.add(
+    "pop"
+  );
+
+
+  const prizeName =
+    $("prizeName").value.trim() ||
+    "الجائزة رقم " + prizeNo;
+
+
+  smallEl.textContent =
+    prizeName;
+
+
+  drawn.push({
+
+    id:
+      finalWinner.id,
+
+    code:
+      finalWinner.code,
+
+    name:
+      finalWinner.name,
+
+    prize:
+      prizeName,
+
+    date:
+      currentDate,
+
+    time:
+      new Date().toLocaleString(
+        "ar-EG"
+      )
+
+  });
+
+
+  save();
+
+
+  prizeNo =
+    drawn.length + 1;
+
+
+  fireConfetti();
+
+
+  beep(
+    1000,
+    .25
+  );
+
+
+  await sleep(300);
+
+
+  $("next").disabled =
+    false;
+
+  $("start").disabled =
+    false;
+
+  busy = false;
+
+}
+
+
+/* =========================================
+   CONFETTI
+========================================= */
+
+function fireConfetti(){
+
+  const canvas =
+    $("confetti");
+
+  const ctx =
+    canvas.getContext("2d");
+
+
+  canvas.width =
+    window.innerWidth;
+
+  canvas.height =
+    window.innerHeight;
+
+
+  const particles =
+    Array.from(
+      {length:180},
+      () => ({
+
+        x:
+          canvas.width / 2,
+
+        y:
+          canvas.height * .35,
+
+        vx:
+          (Math.random() - .5) * 12,
+
+        vy:
+          Math.random() * -10 - 3,
+
+        size:
+          Math.random() * 5 + 2,
+
+        life:
+          Math.random() * 90 + 60,
+
+        hue:
+          Math.random() * 360
+
+      })
+    );
+
+
+  let frame = 0;
+
+
+  function animate(){
+
+    ctx.clearRect(
+      0,
+      0,
+      canvas.width,
+      canvas.height
+    );
+
+
+    particles.forEach(
+      particle => {
+
+        particle.x +=
+          particle.vx;
+
+        particle.y +=
+          particle.vy;
+
+        particle.vy +=
+          .18;
+
+        particle.life--;
+
+
+        ctx.fillStyle =
+          `hsl(${particle.hue},90%,60%)`;
+
+
+        ctx.fillRect(
+          particle.x,
+          particle.y,
+          particle.size,
+          particle.size
+        );
+
+      }
+    );
+
+
+    frame++;
+
+
+    if(frame < 110){
+
+      requestAnimationFrame(
+        animate
+      );
+
+    }else{
+
+      ctx.clearRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+      );
+
+    }
+
+  }
+
+
+  animate();
+
+}
+
+
+/* =========================================
+   BUTTONS
+========================================= */
+
+$("start").onclick =
+  draw;
+
+
+$("next").onclick =
+  () => {
+
+    prizeNo =
+      drawn.length + 1;
+
+
+    $("prizeName").value =
+      "الجائزة رقم " + prizeNo;
+
+
+    draw();
+
+  };
+
+
+$("reset").onclick =
+  () => {
+
+    const confirmed =
+      confirm(
+        "تأكيد حذف نتائج السحب المحفوظة على هذا الجهاز؟"
+      );
+
+
+    if(!confirmed)
+      return;
+
+
+    drawn = [];
+
+    prizeNo = 1;
+
+
+    save();
+
+
+    statusEl.textContent =
+      "تم تصفير نتائج السحب.";
+
+
+    numberEl.textContent =
+      "—";
+
+
+    winnerEl.textContent =
+      "";
+
+
+    smallEl.textContent =
+      "";
+
+
+    $("next").disabled =
+      true;
+
+  };
+
+
+/* =========================================
+   START
+========================================= */
+
+renderWinners();
+
+loadMembers()
+  .then(
+    () => loadAttendance()
+  )
+  .catch(
+    error => {
+
+      console.error(error);
+
+      sessionInfo.textContent =
+        "⚠️ تعذر الاتصال بقاعدة البيانات.";
+
+      $("start").disabled =
+        true;
+
+    }
+  );
+
+</script>
+
+</body>
+</html>
