@@ -1,0 +1,399 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>تسجيل الحضور | أسرة أبي سيفين وتماف إيريني</title>
+<style>
+:root{
+  --bg:#090909;
+  --gold:#d7b45a;
+  --gold2:#f0d98b;
+  --text:#f5f1e7;
+  --muted:#aaa28f;
+  --line:#2c2a25;
+  --ok:#78c99a;
+  --bad:#df7777
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  min-height:100vh;
+  background:radial-gradient(circle at top,#211d13,#090909 45%);
+  color:var(--text);
+  font-family:Tahoma,Arial,sans-serif;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px
+}
+
+.card{
+  width:100%;
+  max-width:420px;
+  background:#111;
+  border:1px solid var(--line);
+  border-radius:20px;
+  padding:26px 22px;
+  text-align:center
+}
+
+.cross{
+  width:54px;
+  height:54px;
+  border-radius:14px;
+  display:grid;
+  place-items:center;
+  background:#211b0e;
+  color:var(--gold2);
+  font-size:30px;
+  border:1px solid #584a2a;
+  margin:0 auto 12px
+}
+
+h1{
+  margin:0 0 4px;
+  font-size:19px;
+  color:var(--gold2)
+}
+
+p.sub{
+  margin:0 0 22px;
+  color:var(--muted);
+  font-size:13px
+}
+
+label{
+  display:block;
+  text-align:right;
+  font-size:13px;
+  color:var(--muted);
+  margin:14px 0 6px
+}
+
+select,input[type=text]{
+  width:100%;
+  background:#0a0a0a;
+  color:var(--text);
+  border:1px solid #37342d;
+  border-radius:12px;
+  padding:14px;
+  font-size:16px
+}
+
+input#code{
+  text-align:center;
+  letter-spacing:8px;
+  font-size:24px;
+  font-weight:900
+}
+
+button{
+  width:100%;
+  margin-top:20px;
+  border:1px solid var(--gold);
+  background:var(--gold);
+  color:#17130a;
+  padding:15px;
+  border-radius:14px;
+  font-weight:900;
+  font-size:16px;
+  cursor:pointer
+}
+
+button:disabled{
+  opacity:.6;
+  cursor:default
+}
+
+.msg{
+  margin-top:16px;
+  padding:14px;
+  border-radius:12px;
+  font-size:14px;
+  line-height:1.8;
+  display:none
+}
+
+.msg.show{ display:block }
+
+.searchWrap{
+  position:relative
+}
+
+.resultsList{
+  margin-top:6px;
+  max-height:220px;
+  overflow-y:auto;
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:#0a0a0a;
+  display:none
+}
+
+.resultsList.show{ display:block }
+
+.resultItem{
+  padding:12px 14px;
+  text-align:right;
+  cursor:pointer;
+  border-bottom:1px solid #1e1d19;
+  font-size:15px
+}
+
+.resultItem:last-child{ border-bottom:none }
+.resultItem:hover, .resultItem.active{ background:#1a170f; color:var(--gold2) }
+
+.resultsList .noMatch{
+  padding:12px 14px;
+  color:var(--muted);
+  font-size:13px;
+  text-align:center
+}
+
+.selectedChip{
+  display:none;
+  margin-top:8px;
+  padding:12px 14px;
+  border-radius:12px;
+  background:#13291d;
+  border:1px solid #245a3c;
+  color:var(--ok);
+  font-size:15px;
+  font-weight:700;
+  text-align:right;
+  align-items:center;
+  justify-content:space-between
+}
+
+.selectedChip.show{ display:flex }
+
+.selectedChip button{
+  width:auto;
+  margin:0;
+  padding:4px 10px;
+  font-size:12px;
+  font-weight:700;
+  background:transparent;
+  color:var(--bad);
+  border:1px solid var(--bad);
+  border-radius:8px
+}
+
+.msg.ok{ background:#13291d; color:var(--ok); border:1px solid #245a3c }
+.msg.bad{ background:#2c1414; color:var(--bad); border:1px solid #5a2424 }
+.msg.info{ background:#0b0b0b; color:var(--muted); border:1px solid var(--line) }
+
+footer{
+  margin-top:18px;
+  color:#6f6858;
+  font-size:11px
+}
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="cross">✝</div>
+  <h1>أسرة أبي سيفين وتماف إيريني</h1>
+  <p class="sub">تسجيل حضور اجتماع الشباب</p>
+
+  <div id="sessionInfo" class="msg info show">جارٍ الاتصال...</div>
+
+  <label for="nameSearch">اكتب اسمك</label>
+  <div class="searchWrap">
+    <input id="nameSearch" type="text" placeholder="ابدأ بكتابة اسمك..." autocomplete="off">
+    <div id="resultsList" class="resultsList"></div>
+  </div>
+  <div id="selectedChip" class="selectedChip">
+    <span id="selectedName"></span>
+    <button id="clearSelected" type="button">تغيير</button>
+  </div>
+
+  <label for="code">كود الحضور (5 أرقام)</label>
+  <input id="code" type="text" inputmode="numeric" maxlength="5" placeholder="00000" autocomplete="off">
+
+  <button id="submitBtn">تسجيل الحضور</button>
+
+  <div id="resultMsg" class="msg"></div>
+
+  <footer>أسرة أبي سيفين وتماف إيريني • اجتماع الشباب</footer>
+</div>
+
+<script type="module">
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBYsIALutHZmfmswRXj9zU50bvJLAalpgM",
+  authDomain: "abu-seifein-youth.firebaseapp.com",
+  projectId: "abu-seifein-youth",
+  storageBucket: "abu-seifein-youth.firebasestorage.app",
+  messagingSenderId: "157182913840",
+  appId: "1:157182913840:web:5d688832c108014792acf5",
+  measurementId: "G-96D8H1RPHM"
+};
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+import { getFirestore, collection, doc, getDoc, setDoc, onSnapshot }
+  from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+
+const $ = id => document.getElementById(id);
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+let members = [];
+let session = { date:null, code:null };
+
+function esc(s){
+  return String(s ?? "").replace(/[&<>"']/g, c => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[c]));
+}
+
+function showResult(text, kind){
+  const el = $("resultMsg");
+  el.textContent = text;
+  el.className = "msg show " + kind;
+}
+
+function refreshSessionInfo(){
+  const el = $("sessionInfo");
+  if(!session.date || !session.code){
+    el.textContent = "لسه مفيش جلسة حضور مفتوحة دلوقتي، استنى المسؤول يفتحها.";
+    el.className = "msg show info";
+    $("submitBtn").disabled = true;
+  } else {
+    el.textContent = "جلسة اجتماع " + session.date + " — اكتب الكود المعلن في الاجتماع.";
+    el.className = "msg show info";
+    $("submitBtn").disabled = false;
+  }
+}
+
+let selectedId = "";
+
+function normText(s){ return String(s).trim().toLowerCase(); }
+
+function renderResults(){
+  const q = normText($("nameSearch").value);
+  const list = $("resultsList");
+
+  if(!q){ list.classList.remove("show"); list.innerHTML = ""; return; }
+
+  const words = q.split(/\s+/).filter(Boolean);
+  const matches = members.filter(m => {
+    const name = normText(m.name);
+    return words.every(w => name.includes(w));
+  }).slice(0, 30);
+
+  list.innerHTML = matches.length
+    ? matches.map(m => `<div class="resultItem" data-id="${esc(m.id)}">${esc(m.name)}</div>`).join("")
+    : `<div class="noMatch">مفيش اسم مطابق، تأكد من الإملاء.</div>`;
+
+  list.classList.add("show");
+}
+
+function selectMember(id){
+  const m = members.find(x => x.id === id);
+  if(!m) return;
+  selectedId = id;
+  $("nameSearch").value = "";
+  $("resultsList").classList.remove("show");
+  $("resultsList").innerHTML = "";
+  $("searchWrap") && ($("searchWrap").style.display = "none");
+  document.querySelector(".searchWrap").style.display = "none";
+  $("selectedName").textContent = m.name;
+  $("selectedChip").classList.add("show");
+}
+
+function clearSelection(){
+  selectedId = "";
+  document.querySelector(".searchWrap").style.display = "block";
+  $("selectedChip").classList.remove("show");
+  $("nameSearch").value = "";
+  $("nameSearch").focus();
+}
+
+$("nameSearch").addEventListener("input", renderResults);
+
+$("resultsList").addEventListener("click", e => {
+  const item = e.target.closest(".resultItem");
+  if(item && item.dataset.id) selectMember(item.dataset.id);
+});
+
+$("clearSelected").onclick = clearSelection;
+
+onSnapshot(collection(db, "members"), snap => {
+  members = snap.docs.map(d => d.data()).sort((a, b) => a.name.localeCompare(b.name, "ar"));
+  if(selectedId && !members.some(m => m.id === selectedId)) clearSelection();
+  renderResults();
+}, err => {
+  console.error(err);
+  showResult("تعذر تحميل قائمة الأعضاء، تأكد من اتصال الإنترنت.", "bad");
+});
+
+onSnapshot(doc(db, "meta", "currentSession"), snap => {
+  const d = snap.exists() ? snap.data() : {};
+  session = { date: d.date || null, code: d.code || null };
+  refreshSessionInfo();
+}, err => console.error(err));
+
+$("code").addEventListener("input", () => {
+  $("code").value = $("code").value.replace(/\D/g, "").slice(0, 5);
+});
+
+$("submitBtn").onclick = async () => {
+
+  const id = selectedId;
+  const code = $("code").value.trim();
+
+  if(!id){ showResult("اختار اسمك الأول من القائمة.", "bad"); return; }
+  if(!code){ showResult("اكتب كود الحضور.", "bad"); return; }
+
+  if(!session.date || !session.code){
+    showResult("لسه مفيش جلسة حضور مفتوحة دلوقتي.", "bad");
+    return;
+  }
+
+  if(code !== session.code){
+    showResult("الكود غير صحيح، تأكد من الكود المعلن في الاجتماع النهاردة.", "bad");
+    return;
+  }
+
+  $("submitBtn").disabled = true;
+
+  try {
+
+    const ref = doc(db, "attendance", session.date);
+    const snap = await getDoc(ref);
+    const data = snap.exists() ? snap.data() : {};
+
+    if(data.records && data.records[id]){
+      showResult("تم تسجيل حضورك بالفعل في اجتماع اليوم.", "info");
+      $("submitBtn").disabled = false;
+      return;
+    }
+
+    const now = new Date().toISOString();
+
+    await setDoc(ref, {
+      records: { [id]: true },
+      times: { [id]: now }
+    }, { merge:true });
+
+    const m = members.find(x => x.id === id);
+    const timeStr = new Date(now).toLocaleTimeString("ar-EG", { hour:"2-digit", minute:"2-digit" });
+
+    showResult("تم تسجيل حضورك بنجاح ✓\n" + (m ? m.name + " — " : "") + session.date + " — " + timeStr, "ok");
+
+  } catch(e){
+    console.error(e);
+    showResult("حصل خطأ، حاول تاني (تأكد من اتصال الإنترنت).", "bad");
+    $("submitBtn").disabled = false;
+  }
+};
+
+</script>
+</body>
+</html>
